@@ -228,6 +228,38 @@ class ViewController: UIViewController {
         
         contentView.addSubview(actionView)
         
+        //create tab view
+        let tabsView = UIView(frame: .zero)
+        tabsView.configureLayout { (YGLayout) in
+            YGLayout.isEnabled = true
+            YGLayout.padding = self.padding
+            YGLayout.flexDirection = .row
+        }
+        
+        //create tab item to add to tabsview
+        let tabItemEpisodes = showTabBarFor(text: "EPISODES", isSelected: true)
+        let tabItemMore = showTabBarFor(text: "MORE", isSelected: false)
+        
+        tabsView.addSubview(tabItemEpisodes)
+        tabsView.addSubview(tabItemMore)
+        
+        //add tab view to content view
+        contentView.addSubview(tabsView)
+        
+        //create table view
+        let tableView = UITableView()
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.backgroundColor = self.backgroundColor
+        tableView.register(ShowTableViewCell.self, forCellReuseIdentifier: self.showCellIdentifier)
+        tableView.configureLayout { (YGLayout) in
+            YGLayout.isEnabled = true
+            YGLayout.flexGrow = 1
+        }
+        
+        //add table view to content view
+        contentView.addSubview(tableView)
+        
         // Apply the layout to view and subviews
         contentView.yoga.applyLayout(preservingOrigin: false)
         
@@ -271,6 +303,34 @@ private extension ViewController {
         actionView.addSubview(actionLabel)
         
         return actionView
+    }
+    
+    func  showTabBarFor(text: String, isSelected: Bool) -> UIView {
+        let tabView = UIView(frame: .zero)
+        tabView.configureLayout { (YGLayout) in
+            YGLayout.isEnabled = true
+            YGLayout.alignItems = .center
+            YGLayout.marginRight = 20
+        }
+        let tabLabelFont = isSelected ? UIFont.boldSystemFont(ofSize: 14) : UIFont.systemFont(ofSize: 14)
+        let fontSize = text.size(attributes: [NSFontAttributeName : tabLabelFont])
+        
+        //them thanh mau do khi chon vao tab
+        let tabSelectionView = UIView(frame: CGRect(x: 0, y: 0, width: fontSize.width, height: 3))
+        if isSelected {
+            tabSelectionView.backgroundColor = .red
+        }
+        tabSelectionView.configureLayout { (YGLayout) in
+            YGLayout.isEnabled = true
+            YGLayout.marginBottom = 5
+        }
+        tabView.addSubview(tabSelectionView)
+        
+        //them chu cua tab
+        let tabLabel = showLabelFor(text: text, font: tabLabelFont)
+        tabView.addSubview(tabLabel)
+        
+        return tabView
     }
     
     // TODO: Add private methods below
